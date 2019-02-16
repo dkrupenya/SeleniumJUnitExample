@@ -43,13 +43,18 @@ public class FirstTest {
 
         FirstPage page = ComObj.definePage(FirstPage.class, driver);
 
-        PanelComponent panel = page.getPanels().get(0);
+        PanelComponent panel = page.panels.findElements().get(0);
 
-        String text = panel.element(panel.title).getText();
+        String text = panel.title.getText();
         System.out.println("Panel header: " + text);
 
-        String votes = panel.element(panel.answers).getText();
+        String votes = panel.answers.getText();
         System.out.println("Panel votes: " + votes);
+
+        String menuItem2 = page.mainMenu.getMenuItemText(1);
+        System.out.println("menuItem2: " + menuItem2);
+
+        page.mainMenu.clickMenuItem(2);
 
         Assert.assertTrue(text.contains("Files API in JAVA 8"));
     }

@@ -2,18 +2,14 @@ package ru.dkrpn.pages;
 
 import org.openqa.selenium.By;
 import ru.dkrpn.ComObj;
+import ru.dkrpn.ComObjList;
+import ru.dkrpn.components.MainMenuComponent;
 import ru.dkrpn.components.PanelComponent;
-
-import java.util.List;
-import java.util.stream.Collectors;
 
 public class FirstPage extends ComObj {
 
-    By panels = By.cssSelector("article.fusion-post-grid.post");
+    public ComObjList<PanelComponent> panels = by(PanelComponent.class).cssSelector("article.fusion-post-grid.post");
 
-    public List<PanelComponent> getPanels() {
-        return this.frozenComponents(PanelComponent.class, panels);
-    }
-
+    public MainMenuComponent mainMenu = ComObj.define(MainMenuComponent.class, By.cssSelector(".fusion-main-menu"), this);
 
 }

@@ -11,7 +11,7 @@ public class WebElementProxy implements InvocationHandler {
 
     public static WebElement define(By selector, ComObj rootElement, boolean useCache){
         return (WebElement) Proxy.newProxyInstance(
-                null,
+                WebElement.class.getClassLoader(),
                 new Class[] { WebElement.class },
                 new WebElementProxy(selector, rootElement, useCache));
     }

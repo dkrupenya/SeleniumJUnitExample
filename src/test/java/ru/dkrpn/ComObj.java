@@ -70,6 +70,56 @@ public abstract class ComObj {
                 .collect(Collectors.toList());
     }
 
+    public <T extends ComObj> ComObjBy<ComObjList<T>> by(Class<T> clazz) {
+        class InnerComObjBy implements ComObjBy<ComObjList<T>> {
+            private ComObj parent;
+            private Class<T> clazz;
+
+            InnerComObjBy(ComObj parent, Class<T> clazz) {
+                this.parent = parent;
+                this.clazz = clazz;
+            }
+
+            public ComObjList<T> id(String id) {
+                return construct(By.id(id));
+            }
+
+            public ComObjList<T> linkText(String linkText) {
+                return construct(By.linkText(linkText));
+            }
+
+            public ComObjList<T> partialLinkText(String partialLinkText) {
+                return construct(By.partialLinkText(partialLinkText));
+            }
+
+            public ComObjList<T> name(String name) {
+                return construct(By.name(name));
+            }
+
+            public ComObjList<T> tagName(String tagName) {
+                return construct(By.tagName(tagName));
+            }
+
+            public ComObjList<T> xpath(String xpathExpression) {
+                return construct(By.xpath(xpathExpression));
+            }
+
+            public ComObjList<T> className(String className) {
+                return construct(By.className(className));
+            }
+
+            public ComObjList<T> cssSelector(String cssSelector) {
+                return construct(By.cssSelector(cssSelector));
+            }
+
+            private ComObjList<T> construct(By by) {
+                return new ComObjList<T>(clazz, parent, by);
+            }
+        }
+
+        return new InnerComObjBy(this, clazz);
+    }
+
     public WebElement getComponentElement() {
         if (this.componentElement != null) {
             return this.componentElement;
@@ -83,5 +133,58 @@ public abstract class ComObj {
 
     public WebElement weProxy(By selector) {
         return WebElementProxy.define(selector, this, false);
+    }
+    public ComObjBy<WebElement> by() {
+        return this.by(false);
+    }
+
+    public ComObjBy<WebElement> by(boolean useCache) {
+        class InnerComObjBy implements ComObjBy<WebElement> {
+            private ComObj comObj;
+            private boolean useCache;
+
+            InnerComObjBy(ComObj comObj, boolean useCache) {
+                this.comObj = comObj;
+                this.useCache = useCache;
+            }
+
+            public WebElement id(String id) {
+                return construct(By.id(id));
+            }
+
+            public WebElement linkText(String linkText) {
+                return construct(By.linkText(linkText));
+            }
+
+            public WebElement partialLinkText(String partialLinkText) {
+                return construct(By.partialLinkText(partialLinkText));
+            }
+
+            public WebElement name(String name) {
+                return construct(By.name(name));
+            }
+
+            public WebElement tagName(String tagName) {
+                return construct(By.tagName(tagName));
+            }
+
+            public WebElement xpath(String xpathExpression) {
+                return construct(By.xpath(xpathExpression));
+            }
+
+            public WebElement className(String className) {
+                return construct(By.className(className));
+            }
+
+            public WebElement cssSelector(String cssSelector) {
+                return construct(By.cssSelector(cssSelector));
+            }
+
+            private WebElement construct(By by) {
+                return WebElementProxy.define(by, comObj, useCache);
+            }
+        }
+
+        return new InnerComObjBy(this, useCache);
     }
 }
