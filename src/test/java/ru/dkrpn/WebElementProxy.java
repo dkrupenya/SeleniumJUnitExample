@@ -9,7 +9,7 @@ import java.lang.reflect.Proxy;
 
 public class WebElementProxy implements InvocationHandler {
 
-    public static WebElement define(By selector, ComObj rootElement, boolean useCache){
+    public static WebElement define(By selector, WebComponent rootElement, boolean useCache){
         return (WebElement) Proxy.newProxyInstance(
                 WebElement.class.getClassLoader(),
                 new Class[] { WebElement.class },
@@ -17,12 +17,12 @@ public class WebElementProxy implements InvocationHandler {
     }
 
     private By selector;
-    private ComObj rootElement;
+    private WebComponent rootElement;
     private boolean useCache;
 
     private WebElement element;
 
-    private WebElementProxy(By selector, ComObj rootElement, boolean useCache) {
+    private WebElementProxy(By selector, WebComponent rootElement, boolean useCache) {
         this.selector = selector;
         this.rootElement = rootElement;
         this.useCache = useCache;

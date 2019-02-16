@@ -6,7 +6,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
-import ru.dkrpn.ComObj;
+import ru.dkrpn.WebComponent;
 import ru.dkrpn.components.PanelComponent;
 import ru.dkrpn.pages.FirstPage;
 
@@ -24,6 +24,7 @@ public class FirstTest {
 
         //Create a new ChromeDriver
         driver = new ChromeDriver();
+        driver.manage().window().maximize();
 
         //Go to www.swtestacademy.com
         driver.navigate().to(testURL);
@@ -41,7 +42,7 @@ public class FirstTest {
         //Assertion
 //        Assert.assertEquals(title, "Software Test Academy");
 
-        FirstPage page = ComObj.definePage(FirstPage.class, driver);
+        FirstPage page = WebComponent.definePage(FirstPage.class, driver);
 
         PanelComponent panel = page.panels.findElements().get(0);
 

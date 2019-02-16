@@ -1,9 +1,9 @@
 package ru.dkrpn.components;
 
 import org.openqa.selenium.WebElement;
-import ru.dkrpn.ComObj;
+import ru.dkrpn.WebComponent;
 
-public class PanelComponent extends ComObj {
+public class PanelComponent extends WebComponent {
 
     public WebElement title = by().cssSelector(".blog-shortcode-post-title.entry-title");
 

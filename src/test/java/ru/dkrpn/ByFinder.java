@@ -1,6 +1,6 @@
 package ru.dkrpn;
 
-public interface ComObjBy<T> {
+public interface ByFinder<T> {
     public T id(String id);
 
     public T linkText(String linkText);
