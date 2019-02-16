@@ -46,10 +46,10 @@ public class FirstTest {
         PanelComponent panel = page.getPanels().get(0);
 
         String text = panel.element(panel.title).getText();
-        System.out.println("Page header: " + text);
+        System.out.println("Panel header: " + text);
 
         String votes = panel.element(panel.answers).getText();
-        System.out.println("Page votes: " + votes);
+        System.out.println("Panel votes: " + votes);
 
         Assert.assertTrue(text.contains("Files API in JAVA 8"));
     }

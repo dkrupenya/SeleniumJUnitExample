@@ -80,4 +80,8 @@ public abstract class ComObj {
         return this.parent != null ?
                 this.parent.getComponentElement().findElement(this.componentSelector) : driver.findElement(this.componentSelector);
     }
+
+    public WebElement weProxy(By selector) {
+        return WebElementProxy.define(selector, this, false);
+    }
 }

@@ -12,10 +12,7 @@ public class FirstPage extends ComObj {
     By panels = By.cssSelector("article.fusion-post-grid.post");
 
     public List<PanelComponent> getPanels() {
-        return elements(panels)
-                .stream()
-                .map(panel -> ComObj.define(PanelComponent.class, panel, this))
-                .collect(Collectors.toList());
+        return this.frozenComponents(PanelComponent.class, panels);
     }
 
 
