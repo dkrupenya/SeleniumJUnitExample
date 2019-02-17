@@ -57,7 +57,7 @@ public class FirstTest {
 
         page.mainMenu.clickMenuItem(2);
 
-        Assert.assertTrue(text.contains("Files API in JAVA 8"));
+        Assert.assertTrue(menuItem2.contains("About"));
     }
 
     //-----------------------------------Test TearDown-----------------------------------

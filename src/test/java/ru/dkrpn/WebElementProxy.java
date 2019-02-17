@@ -9,21 +9,21 @@ import java.lang.reflect.Proxy;
 
 public class WebElementProxy implements InvocationHandler {
 
-    public static WebElement define(By selector, WebComponent rootElement, boolean useCache){
+    public static WebElement define(By locator, WebComponent rootElement, boolean useCache){
         return (WebElement) Proxy.newProxyInstance(
                 WebElement.class.getClassLoader(),
                 new Class[] { WebElement.class },
-                new WebElementProxy(selector, rootElement, useCache));
+                new WebElementProxy(locator, rootElement, useCache));
     }
 
-    private By selector;
+    private By locator;
     private WebComponent rootElement;
     private boolean useCache;
 
     private WebElement element;
 
-    private WebElementProxy(By selector, WebComponent rootElement, boolean useCache) {
-        this.selector = selector;
+    private WebElementProxy(By locator, WebComponent rootElement, boolean useCache) {
+        this.locator = locator;
         this.rootElement = rootElement;
         this.useCache = useCache;
     }
@@ -31,12 +31,12 @@ public class WebElementProxy implements InvocationHandler {
     public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
         if (this.useCache) {
             if (this.element == null) {
-                this.element = this.rootElement.element(this.selector);
+                this.element = this.rootElement.element(this.locator);
             }
             return method.invoke(this.element, args);
         } else {
            // no cache
-            WebElement tmpElement = this.rootElement.element(this.selector);
+            WebElement tmpElement = this.rootElement.element(this.locator);
             return method.invoke(tmpElement, args);
         }
     }

@@ -80,7 +80,7 @@ public abstract class WebComponent {
      * @return
      */
     public ByFinder<WebElementList> listBy() {
-        return this.byClauseConstructor((By by) -> new WebElementList(parent, by));
+        return this.byClauseConstructor((By by) -> new WebElementList(this, by));
     }
 
     /**

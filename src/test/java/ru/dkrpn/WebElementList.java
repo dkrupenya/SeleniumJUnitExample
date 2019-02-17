@@ -7,15 +7,15 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 public class WebElementList {
-    private By selector;
+    private By locator;
     WebComponent parent;
 
-    public WebElementList(WebComponent parent, By selector) {
-        this.selector = selector;
+    public WebElementList(WebComponent parent, By locator) {
+        this.locator = locator;
         this.parent = parent;
     }
 
     public List<WebElement> findElements() {
-        return parent.elements(selector);
+        return parent.elements(locator);
     }
 }
