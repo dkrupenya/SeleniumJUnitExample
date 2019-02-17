@@ -31,39 +31,38 @@ public abstract class WebComponent {
             this.driver = driver;
         }
 
-        public Builder<T> parent(WebComponent parent){
+        public Builder(Class<T> clazz, WebComponent parent) {
+            // mandatory fields
+            this.clazz = clazz;
+            this.driver = parent.driver;
             this.parent = parent;
-            return this;
         }
 
-        public Builder<T> locator(By componentLocator){
+        public Builder<T> locator(By componentLocator) {
             this.componentLocator = componentLocator;
             return this;
         }
 
-        public Builder<T> element(WebElement componentElement){
+        public Builder<T> element(WebElement componentElement) {
             this.componentElement = componentElement;
             return this;
         }
 
         public T build() {
             try {
-                if (this.driver == null) {
-                    throw new RuntimeException("Component must have driver");
-                }
 
                 T obj = clazz.newInstance();
-                obj.driver = this.driver;
-                obj.parent = this.parent;
-                obj.componentLocator = this.componentLocator == null ? obj.componentLocator : this.componentLocator;
-                obj.componentElement = this.componentElement == null ? obj.componentElement : this.componentElement;
+                obj.driver = driver;
+                obj.parent = parent;
+                obj.componentLocator = componentLocator == null ? obj.componentLocator : componentLocator;
+                obj.componentElement = componentElement == null ? obj.componentElement : componentElement;
 
-                if ((this.componentLocator == null && this.componentElement == null)) {
+                if ((obj.componentLocator == null && obj.componentElement == null)) {
                     throw new RuntimeException("Component must have locator or element");
                 }
                 return obj;
 
-            } catch (InstantiationException | IllegalAccessException  e) {
+            } catch (InstantiationException | IllegalAccessException e) {
                 throw new RuntimeException("can't instantiate " + clazz.getName());
             }
 
@@ -93,7 +92,7 @@ public abstract class WebComponent {
         }
         return this.parent != null
                 ? this.parent.getComponentElement().findElement(this.componentLocator)
-                : driver.findElement(this.componentLocator);
+                : getDriver().findElement(this.componentLocator);
     }
 
     public <T extends WebComponent> ByFinder<WebComponentList<T>> componentListBy(Class<T> clazz) {
@@ -102,7 +101,7 @@ public abstract class WebComponent {
 
     public <T extends WebComponent> ByFinder<T> componentBy(Class<T> clazz) {
 
-        return this.byClauseConstructor((By by) -> new Builder<T>(clazz, this.driver).parent(this).locator(by).build());
+        return this.byClauseConstructor((By by) -> new Builder<T>(clazz, this).locator(by).build());
     }
 
     public ByFinder<WebElementList> elementListBy() {
@@ -118,9 +117,20 @@ public abstract class WebComponent {
         return this.byClauseConstructor((By by) -> WebElementProxyInvocationHandler.define(by, this, useCache));
     }
 
+    private WebDriver getDriver() {
+        if (this.driver != null) {
+            return this.driver;
+        }
+        if (this.parent != null) {
+            return this.driver = this.parent.getDriver();
+        }
+        throw new RuntimeException("root component has no web driver");
+    }
+
     private <T> ByFinder<T> byClauseConstructor(Function<By, T> construct) {
         class InnerByFinder implements ByFinder<T> {
             Function<By, T> construct;
+
             InnerByFinder(Function<By, T> lambdaT) {
                 this.construct = lambdaT;
             }

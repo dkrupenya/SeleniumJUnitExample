@@ -8,7 +8,9 @@ import ru.dkrpn.components.PanelComponent;
 
 public class FirstPage extends WebComponent {
 
-    public By componentLocator = By.cssSelector("body");
+    public FirstPage() {
+        componentLocator = By.cssSelector("body");
+    }
 
     public WebComponentList<PanelComponent> panels = componentListBy(PanelComponent.class).cssSelector("article.fusion-post-grid.post");
 
