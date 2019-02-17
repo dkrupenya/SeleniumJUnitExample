@@ -11,47 +11,67 @@ public abstract class WebComponent {
     public WebDriver driver;
     public WebComponent parent;
     public By componentLocator;
-    WebElement componentElement;
+    public WebElement componentElement;
 
-    public static <T extends WebComponent> T definePage(Class<T> classDef, WebDriver driver) {
-        return WebComponent.define(classDef, driver, null, By.cssSelector("body"), null);
+    public static <T extends WebComponent> T definePage(Class<T> clazz, WebDriver driver) {
+        return new WebComponent.Builder<T>(clazz, driver).build();
     }
 
-    public static <T extends WebComponent> T define(Class<T> classDef, By componentSelector, WebComponent parent) {
-        return WebComponent.define(classDef, parent.driver, parent, componentSelector, null);
-    }
+    public static class Builder<T extends WebComponent> {
 
-    public static <T extends WebComponent> T define(Class<T> classDef, By componentSelector, WebDriver driver) {
-        return WebComponent.define(classDef, driver, null, componentSelector, null);
-    }
+        private Class<T> clazz;
+        private WebDriver driver;
+        private WebComponent parent;
+        private By componentLocator;
+        private WebElement componentElement;
 
-    public static <T extends WebComponent> T define(Class<T> classDef, WebElement componentElement, WebComponent parent) {
-        return WebComponent.define(classDef, parent.driver, parent, null, componentElement);
-    }
-
-    public static <T extends WebComponent> T define(Class<T> classDef, WebElement componentElement, WebDriver driver) {
-        return WebComponent.define(classDef, driver, null, null, componentElement);
-    }
-
-    public static <T extends WebComponent> T define(Class<T> classDef,
-                                                    WebDriver driver,
-                                                    WebComponent parent,
-                                                    By componentSelector,
-                                                    WebElement componentElement) {
-        try {
-            T obj = classDef.newInstance();
-            obj.driver = driver;
-            obj.parent = parent;
-            obj.componentLocator = componentSelector;
-            obj.componentElement = componentElement;
-            return obj;
-
-        } catch (InstantiationException | IllegalAccessException  e) {
-            throw new RuntimeException("can't instantiate " + classDef.getName());
+        public Builder(Class<T> clazz, WebDriver driver) {
+            // mandatory fields
+            this.clazz = clazz;
+            this.driver = driver;
         }
+
+        public Builder<T> parent(WebComponent parent){
+            this.parent = parent;
+            return this;
+        }
+
+        public Builder<T> locator(By componentLocator){
+            this.componentLocator = componentLocator;
+            return this;
+        }
+
+        public Builder<T> element(WebElement componentElement){
+            this.componentElement = componentElement;
+            return this;
+        }
+
+        public T build() {
+            try {
+                if (this.driver == null) {
+                    throw new RuntimeException("Component must have driver");
+                }
+
+                T obj = clazz.newInstance();
+                obj.driver = this.driver;
+                obj.parent = this.parent;
+                obj.componentLocator = this.componentLocator == null ? obj.componentLocator : this.componentLocator;
+                obj.componentElement = this.componentElement == null ? obj.componentElement : this.componentElement;
+
+                if ((this.componentLocator == null && this.componentElement == null)) {
+                    throw new RuntimeException("Component must have locator or element");
+                }
+                return obj;
+
+            } catch (InstantiationException | IllegalAccessException  e) {
+                throw new RuntimeException("can't instantiate " + clazz.getName());
+            }
+
+        }
+
     }
 
-    public boolean isCached() {
+    public boolean usingCache() {
         return this.componentElement != null;
     }
 
@@ -68,10 +88,12 @@ public abstract class WebComponent {
             return this.componentElement;
         }
         if (this.componentLocator == null) {
-            throw new RuntimeException("component realElement or component selector should be defined: " + this.getClass().getName());
+            throw new RuntimeException("component realElement or component selector should be defined: "
+                    + this.getClass().getName());
         }
-        return this.parent != null ?
-                this.parent.getComponentElement().findElement(this.componentLocator) : driver.findElement(this.componentLocator);
+        return this.parent != null
+                ? this.parent.getComponentElement().findElement(this.componentLocator)
+                : driver.findElement(this.componentLocator);
     }
 
     public <T extends WebComponent> ByFinder<WebComponentList<T>> componentListBy(Class<T> clazz) {
@@ -79,7 +101,8 @@ public abstract class WebComponent {
     }
 
     public <T extends WebComponent> ByFinder<T> componentBy(Class<T> clazz) {
-        return this.byClauseConstructor((By by) -> WebComponent.define(clazz, By.cssSelector(".fusion-main-menu"), this));
+
+        return this.byClauseConstructor((By by) -> new Builder<T>(clazz, this.driver).parent(this).locator(by).build());
     }
 
     public ByFinder<WebElementList> elementListBy() {
@@ -87,12 +110,12 @@ public abstract class WebComponent {
     }
 
 
-    public ByFinder<WebElement> elementBy() {
+    public ByFinder<WebElementProxy> elementBy() {
         return this.elementBy(false);
     }
 
-    public ByFinder<WebElement> elementBy(boolean useCache) {
-        return this.byClauseConstructor((By by) -> WebElementProxy.define(by, this, useCache));
+    public ByFinder<WebElementProxy> elementBy(boolean useCache) {
+        return this.byClauseConstructor((By by) -> WebElementProxyInvocationHandler.define(by, this, useCache));
     }
 
     private <T> ByFinder<T> byClauseConstructor(Function<By, T> construct) {

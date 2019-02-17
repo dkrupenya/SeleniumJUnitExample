@@ -8,10 +8,10 @@ import ru.dkrpn.components.PanelComponent;
 
 public class FirstPage extends WebComponent {
 
-    public By componentLocator = By.cssSelector(".body");
+    public By componentLocator = By.cssSelector("body");
 
     public WebComponentList<PanelComponent> panels = componentListBy(PanelComponent.class).cssSelector("article.fusion-post-grid.post");
 
-    public MainMenuComponent mainMenu = WebComponent.define(MainMenuComponent.class, By.cssSelector(".fusion-main-menu"), this);
+    public MainMenuComponent mainMenu = componentBy(MainMenuComponent.class).cssSelector(".fusion-main-menu");
 
 }
