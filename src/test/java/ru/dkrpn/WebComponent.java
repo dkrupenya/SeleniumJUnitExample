@@ -55,49 +55,43 @@ public abstract class WebComponent {
         return this.componentElement != null;
     }
 
-    public WebElement element(By locator) {
+    public WebElement realElement(By locator) {
         return this.getComponentElement().findElement(locator);
     }
 
-    public List<WebElement> elements(By locator) {
+    public List<WebElement> realElements(By locator) {
         return this.getComponentElement().findElements(locator);
     }
-
 
     public WebElement getComponentElement() {
         if (this.componentElement != null) {
             return this.componentElement;
         }
         if (this.componentLocator == null) {
-            throw new RuntimeException("component element or component selector should be defined: " + this.getClass().getName());
+            throw new RuntimeException("component realElement or component selector should be defined: " + this.getClass().getName());
         }
         return this.parent != null ?
                 this.parent.getComponentElement().findElement(this.componentLocator) : driver.findElement(this.componentLocator);
     }
 
-    /**
-     * Allows to create list of components
-     * @return
-     */
-    public ByFinder<WebElementList> listBy() {
-        return this.byClauseConstructor((By by) -> new WebElementList(this, by));
-    }
-
-    /**
-     * Allows to create list of components
-     * @param clazz
-     * @param <T>
-     * @return
-     */
-    public <T extends WebComponent> ByFinder<WebComponentList<T>> listBy(Class<T> clazz) {
+    public <T extends WebComponent> ByFinder<WebComponentList<T>> componentListBy(Class<T> clazz) {
         return this.byClauseConstructor((By by) -> new WebComponentList<T>(clazz, this, by));
     }
 
-    public ByFinder<WebElement> by() {
-        return this.by(false);
+    public <T extends WebComponent> ByFinder<T> componentBy(Class<T> clazz) {
+        return this.byClauseConstructor((By by) -> WebComponent.define(clazz, By.cssSelector(".fusion-main-menu"), this));
     }
 
-    public ByFinder<WebElement> by(boolean useCache) {
+    public ByFinder<WebElementList> elementListBy() {
+        return this.byClauseConstructor((By by) -> new WebElementList(this, by));
+    }
+
+
+    public ByFinder<WebElement> elementBy() {
+        return this.elementBy(false);
+    }
+
+    public ByFinder<WebElement> elementBy(boolean useCache) {
         return this.byClauseConstructor((By by) -> WebElementProxy.define(by, this, useCache));
     }
 

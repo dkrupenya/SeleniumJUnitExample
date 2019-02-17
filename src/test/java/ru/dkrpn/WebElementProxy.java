@@ -31,12 +31,12 @@ public class WebElementProxy implements InvocationHandler {
     public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
         if (this.useCache) {
             if (this.element == null) {
-                this.element = this.rootElement.element(this.locator);
+                this.element = this.rootElement.realElement(this.locator);
             }
             return method.invoke(this.element, args);
         } else {
            // no cache
-            WebElement tmpElement = this.rootElement.element(this.locator);
+            WebElement tmpElement = this.rootElement.realElement(this.locator);
             return method.invoke(tmpElement, args);
         }
     }

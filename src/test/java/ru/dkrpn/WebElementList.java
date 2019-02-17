@@ -4,7 +4,6 @@ import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 public class WebElementList {
     private By locator;
@@ -16,6 +15,6 @@ public class WebElementList {
     }
 
     public List<WebElement> findElements() {
-        return parent.elements(locator);
+        return parent.realElements(locator);
     }
 }

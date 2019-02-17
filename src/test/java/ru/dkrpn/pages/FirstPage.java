@@ -10,7 +10,7 @@ public class FirstPage extends WebComponent {
 
     public By componentLocator = By.cssSelector(".body");
 
-    public WebComponentList<PanelComponent> panels = listBy(PanelComponent.class).cssSelector("article.fusion-post-grid.post");
+    public WebComponentList<PanelComponent> panels = componentListBy(PanelComponent.class).cssSelector("article.fusion-post-grid.post");
 
     public MainMenuComponent mainMenu = WebComponent.define(MainMenuComponent.class, By.cssSelector(".fusion-main-menu"), this);
 

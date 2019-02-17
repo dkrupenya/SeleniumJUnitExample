@@ -17,7 +17,7 @@ public class WebComponentList<T extends WebComponent> {
     }
 
     public List<T> findElements() {
-        return parent.elements(locator)
+        return parent.realElements(locator)
                 .stream()
                 .map(panel -> WebComponent.define(clazz, panel, parent))
                 .collect(Collectors.toList());
